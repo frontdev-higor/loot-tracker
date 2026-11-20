@@ -43,4 +43,4 @@ Criado por **Alanya** da guilda **Lagados e Furiosos** (Horda) e para uso dos jo
 
 ---
 
-Desenvolvido por **Elias Higor** & **Claude AI**
+Desenvolvido por **Elias Higor**
