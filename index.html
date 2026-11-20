@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Loot Tracker — Lagados e Furiosos</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Inter:wght@400;500;600&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-family: 'Inter', sans-serif;
+      background-color: #0d0d0d;
+      color: #e0d5c1;
+      padding: 32px 20px;
+      gap: 20px;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    /* ══════════════════════════════════
+       MODO CLARO — TEMA ALIANÇA
+       Azul real + dourado
+    ══════════════════════════════════ */
+    .claro {
+      background-color: #e8ecf4;
+      color: #1a1e2e;
+    }
+
+    /* ── HEADER / GUILDA ── */
+    .header {
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    .header h1 {
+      font-family: 'Cinzel', serif;
+      font-size: 1.8rem;
+      color: #bf0a0a;
+      letter-spacing: 1px;
+    }
+
+    .claro .header h1 {
+      color: #1a3c8a;
+    }
+
+    .header .horda {
+      font-size: 2rem;
+      margin-bottom: 4px;
+    }
+
+    .header .subtitulo {
+      font-size: 0.85rem;
+      color: #8a7e6b;
+      font-style: italic;
+    }
+
+    .claro .header .subtitulo {
+      color: #6a7494;
+    }
+
+    .header .raid-info {
+      font-size: 0.9rem;
+      color: #c9a44a;
+      margin-top: 4px;
+      font-weight: 500;
+    }
+
+    .claro .header .raid-info {
+      color: #8a6d1b;
+    }
+
+    /* ── CONTROLES TOPO ── */
+    .topo {
+      display: flex;
+      gap: 12px;
+      width: 100%;
+      max-width: 560px;
+    }
+
+    #entrada {
+      flex: 1;
+      padding: 12px 16px;
+      font-size: 1rem;
+      border: 2px solid #3d2b1f;
+      border-radius: 8px;
+      background-color: #1a1209;
+      color: #e0d5c1;
+      outline: none;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .claro #entrada {
+      background-color: #fff;
+      color: #1a1e2e;
+      border-color: #b0bcd4;
+    }
+
+    #entrada:focus {
+      border-color: #bf0a0a;
+    }
+
+    .claro #entrada:focus {
+      border-color: #1a3c8a;
+    }
+
+    #adicionar {
+      padding: 12px 24px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 8px;
+      background-color: #bf0a0a;
+      color: #fff;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background-color 0.2s;
+    }
+
+    .claro #adicionar {
+      background-color: #1a3c8a;
+    }
+
+    #adicionar:hover {
+      background-color: #9a0808;
+    }
+
+    .claro #adicionar:hover {
+      background-color: #142e6b;
+    }
+
+    /* ── INFO BAR ── */
+    .info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      max-width: 560px;
+    }
+
+    #contador {
+      font-size: 0.95rem;
+      color: #8a7e6b;
+    }
+
+    .claro #contador {
+      color: #6a7494;
+    }
+
+    .info-acoes {
+      display: flex;
+      gap: 10px;
+    }
+
+    #modo {
+      padding: 6px 14px;
+      font-size: 0.8rem;
+      border: 1px solid #3d2b1f;
+      border-radius: 6px;
+      background-color: transparent;
+      color: #8a7e6b;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .claro #modo {
+      border-color: #b0bcd4;
+      color: #6a7494;
+    }
+
+    #modo:hover {
+      border-color: #c9a44a;
+      color: #c9a44a;
+    }
+
+    .claro #modo:hover {
+      border-color: #1a3c8a;
+      color: #1a3c8a;
+    }
+
+    /* Resetar — discreto, com confirmação visual no hover */
+    #limpar {
+      padding: 6px 14px;
+      font-size: 0.75rem;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      background-color: transparent;
+      color: #3d2b1f;
+      cursor: pointer;
+      transition: all 0.3s;
+      opacity: 0.5;
+    }
+
+    .claro #limpar {
+      color: #b0bcd4;
+    }
+
+    #limpar:hover {
+      border-color: #bf0a0a;
+      color: #bf0a0a;
+      opacity: 1;
+    }
+
+    .claro #limpar:hover {
+      border-color: #8b2020;
+      color: #8b2020;
+      opacity: 1;
+    }
+
+    /* ── AVISO ── */
+    #aviso {
+      font-size: 1rem;
+      color: #5a4a3a;
+      font-style: italic;
+    }
+
+    .claro #aviso {
+      color: #8a92a8;
+    }
+
+    /* ── LISTA DE JOGADORES ── */
+    #lista {
+      width: 100%;
+      max-width: 560px;
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    #lista li {
+      padding: 14px 16px;
+      background-color: #1a1209;
+      border-radius: 8px;
+      border-left: 3px solid #bf0a0a;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: border-color 0.3s;
+    }
+
+    .claro #lista li {
+      background-color: #fff;
+      border-left-color: #1a3c8a;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+
+    /* ── Classe do jogador (emblema + cor) ── */
+    #lista li .classe-emblema {
+      font-size: 1.2rem;
+      min-width: 28px;
+      text-align: center;
+      cursor: pointer;
+      user-select: none;
+      opacity: 0.4;
+      transition: opacity 0.2s;
+    }
+
+    #lista li .classe-emblema.ativa {
+      opacity: 1;
+    }
+
+    #lista li .jogador-nome {
+      flex: 1;
+      font-size: 1rem;
+      font-weight: 500;
+    }
+
+    #lista li .loot-controle {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    #lista li .loot-controle button {
+      width: 28px;
+      height: 28px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 6px;
+      background-color: #3d2b1f;
+      color: #c9a44a;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .claro #lista li .loot-controle button {
+      background-color: #dde3f0;
+      color: #3a4a6b;
+    }
+
+    #lista li .loot-controle button:hover {
+      background-color: #5a4030;
+    }
+
+    .claro #lista li .loot-controle button:hover {
+      background-color: #c5cde0;
+    }
+
+    #lista li .loot-count {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #c9a44a;
+      min-width: 24px;
+      text-align: center;
+    }
+
+    .claro #lista li .loot-count {
+      color: #8a6d1b;
+    }
+
+    /* Espaço extra entre loot e excluir pra evitar missclick */
+    #lista li .excluir {
+      padding: 4px 10px;
+      font-size: 0.8rem;
+      border: none;
+      border-radius: 6px;
+      background-color: #bf0a0a;
+      color: #fff;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      margin-left: 16px;
+    }
+
+    .claro #lista li .excluir {
+      background-color: #8b2020;
+    }
+
+    #lista li .excluir:hover {
+      background-color: #9a0808;
+    }
+
+    /* ══════════════════════════════════
+       CLASSES DO WOW — CORES OFICIAIS
+       A borda esquerda do <li> muda
+    ══════════════════════════════════ */
+    #lista li.death-knight  { border-left-color: #C41E3A; }
+    #lista li.druid         { border-left-color: #FF7C0A; }
+    #lista li.hunter        { border-left-color: #AAD372; }
+    #lista li.mage          { border-left-color: #3FC7EB; }
+    #lista li.paladin       { border-left-color: #F48CBA; }
+    #lista li.priest        { border-left-color: #FFFFFF; }
+    #lista li.rogue         { border-left-color: #FFF468; }
+    #lista li.shaman        { border-left-color: #0070DD; }
+    #lista li.warlock       { border-left-color: #8788EE; }
+    #lista li.warrior       { border-left-color: #C69B6D; }
+
+    /* Cor do nome do jogador pela classe */
+    #lista li.death-knight .jogador-nome { color: #C41E3A; }
+    #lista li.druid .jogador-nome        { color: #FF7C0A; }
+    #lista li.hunter .jogador-nome       { color: #AAD372; }
+    #lista li.mage .jogador-nome         { color: #3FC7EB; }
+    #lista li.paladin .jogador-nome      { color: #F48CBA; }
+    #lista li.priest .jogador-nome       { color: #FFFFFF; }
+    #lista li.rogue .jogador-nome        { color: #FFF468; }
+    #lista li.shaman .jogador-nome       { color: #0070DD; }
+    #lista li.warlock .jogador-nome      { color: #8788EE; }
+    #lista li.warrior .jogador-nome      { color: #C69B6D; }
+
+    /* Modo claro: cores ajustadas pra contraste no fundo branco */
+    .claro #lista li.death-knight .jogador-nome { color: #9a1830; }
+    .claro #lista li.druid .jogador-nome        { color: #cc6308; }
+    .claro #lista li.hunter .jogador-nome       { color: #5a7a20; }
+    .claro #lista li.mage .jogador-nome         { color: #1a8aaa; }
+    .claro #lista li.paladin .jogador-nome      { color: #c06a90; }
+    .claro #lista li.priest .jogador-nome       { color: #6a6a6a; }
+    .claro #lista li.rogue .jogador-nome        { color: #9a8a10; }
+    .claro #lista li.shaman .jogador-nome       { color: #0058b0; }
+    .claro #lista li.warlock .jogador-nome      { color: #6060c0; }
+    .claro #lista li.warrior .jogador-nome      { color: #8a6a40; }
+
+    /* Modo claro: bordas também usam as cores da classe */
+    .claro #lista li.death-knight  { border-left-color: #C41E3A; }
+    .claro #lista li.druid         { border-left-color: #FF7C0A; }
+    .claro #lista li.hunter        { border-left-color: #AAD372; }
+    .claro #lista li.mage          { border-left-color: #3FC7EB; }
+    .claro #lista li.paladin       { border-left-color: #F48CBA; }
+    .claro #lista li.priest        { border-left-color: #aaaaaa; }
+    .claro #lista li.rogue         { border-left-color: #d4c830; }
+    .claro #lista li.shaman        { border-left-color: #0070DD; }
+    .claro #lista li.warlock       { border-left-color: #8788EE; }
+    .claro #lista li.warrior       { border-left-color: #C69B6D; }
+
+    /* ── FOOTER GUILDA ── */
+    .footer {
+      margin-top: 24px;
+      text-align: center;
+      font-size: 0.75rem;
+      color: #3d2b1f;
+    }
+
+    .claro .footer {
+      color: #b0bcd4;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div class="horda">⚔️</div>
+    <h1>RAID LOOT TRACKER</h1>
+    <p class="subtitulo">WOW WotLK - Warmane - Onyxia</p>
+    <p class="raid-info">Contador de itens dos jogadores em Raids!</p>
+  </div>
+
+  <div class="topo">
+    <input type="text" id="entrada" placeholder="Nome do jogador...">
+    <button id="adicionar">Adicionar</button>
+  </div>
+
+  <div class="info">
+    <p id="contador">0 jogadores na raid</p>
+    <div class="info-acoes">
+      <button id="modo">Modo Aliança</button>
+      <button id="limpar">Resetar Players</button>
+    </div>
+  </div>
+
+  <p id="aviso">Nenhum jogador na raid ainda...</p>
+
+  <ul id="lista"></ul>
+
+  <div class="footer">
+    Desenvolvido por Elias Higor & Claude AI (Horde Player: Alanya)
+  </div>
+
+  <script>
+
+    const entrada = document.querySelector('#entrada')
+    const adicionar = document.querySelector('#adicionar')
+    const contador = document.querySelector('#contador')
+    const modo = document.querySelector('#modo')
+    const limpar = document.querySelector('#limpar')
+    const aviso = document.querySelector('#aviso')
+    const lista = document.querySelector('#lista')
+    const corpo = document.querySelector('body')
+
+    let modoEscuro = true
+
+    const classes = ['death-knight', 'druid', 'hunter', 'mage', 'paladin', 'priest', 'rogue', 'shaman', 'warlock', 'warrior']
+    const emojis = ['🩸', '🐾', '🏹', '❄️', '🛡️', '✨', '🗡️', '⚡', '🔮', '⚔️']
+
+    adicionar.addEventListener('click', () => {
+
+      let lootCount = 0
+      let indice = -1
+
+      if (entrada.value !== '') {
+
+        const li = document.createElement('li')
+
+        const emblema = document.createElement('span')
+        emblema.classList.add('classe-emblema')
+        emblema.textContent = '?'
+        emblema.addEventListener('click', () => {
+          indice++
+          if (indice >= classes.length) {
+            indice = -1
+          }
+          if (indice === -1) {
+            emblema.textContent = '?'
+            li.classList.remove(...classes)
+          } else {
+            emblema.textContent = emojis[indice]
+            li.classList.remove(...classes)
+            li.classList.add(classes[indice])
+          }
+          salvarDados()
+        })
+
+        const span = document.createElement('span')
+        span.classList.add('jogador-nome')
+        span.textContent = entrada.value
+
+        const div = document.createElement('div')
+        div.classList.add('loot-controle')
+        const aumentar = document.createElement('button')
+        aumentar.textContent = '+'
+        aumentar.addEventListener('click', () => {
+          lootCount++
+          count.textContent = lootCount
+          salvarDados()
+        })
+        const diminuir = document.createElement('button')
+        diminuir.textContent = '-'
+        diminuir.addEventListener('click', () => {
+          if (lootCount > 0) {
+            lootCount--
+          }
+          count.textContent = lootCount
+          salvarDados()
+        })
+        const count = document.createElement('span')
+        count.classList.add('loot-count')
+        count.textContent = lootCount
+
+        const x = document.createElement('button')
+        x.textContent = 'X'
+        x.classList.add('excluir')
+        x.addEventListener('click', () => {
+          li.remove()
+          atualizarContador()
+          salvarDados()
+        })
+
+        lista.appendChild(li)
+        li.appendChild(emblema)
+        li.appendChild(span)
+        li.appendChild(div)
+        div.appendChild(aumentar)
+        div.appendChild(count)
+        div.appendChild(diminuir)
+        li.appendChild(x)
+
+        entrada.value = ''
+        atualizarContador()
+        salvarDados()
+        
+      }
+
+    })
+
+    modo.addEventListener('click', () => {
+      if (modoEscuro === true) {
+        modo.textContent = 'Modo Horda'
+        modoEscuro = false
+      } else {
+        modo.textContent = 'Modo Aliança'
+        modoEscuro = true
+      }
+      corpo.classList.toggle('claro')
+    })
+
+    limpar.addEventListener('click', () => {
+      limparTudo()
+      atualizarContador()
+      salvarDados()
+    })
+    const limparTudo = () => {
+      lista.innerHTML = ''
+    }
+
+    const atualizarContador = () => {
+      if (lista.children.length < 1) {
+        contador.textContent = `${lista.children.length} jogadores na raid`
+        aviso.textContent = `Nenhum jogador na raid ainda...`
+      } else if (lista.children.length === 1) {
+        contador.textContent = `${lista.children.length} jogador(a) na raid`
+        aviso.textContent = ``
+      } else if (lista.children.length > 1) {
+        contador.textContent = `${lista.children.length} jogadores na raid`
+        aviso.textContent = ``
+      }
+    }
+
+    const salvarDados = () => {
+      const jogadores = []
+      Array.from(lista.children).forEach((li) => {
+        jogadores.push({
+          nome: li.querySelector('.jogador-nome').textContent,
+          loot: li.querySelector('.loot-count').textContent,
+          classe: classes.find(c => li.classList.contains(c)) || '',
+        })
+      })
+      localStorage.setItem('jogadores', JSON.stringify(jogadores))
+    }
+
+    const carregarDados = () => {
+      const dados = localStorage.getItem('jogadores')
+      if (dados) {
+        const jogadores = JSON.parse(dados)
+        jogadores.forEach((jogador) => {
+
+          let lootCount = Number(jogador.loot)
+          let indice = -1
+
+            const li = document.createElement('li')
+
+            const emblema = document.createElement('span')
+            emblema.classList.add('classe-emblema')
+            emblema.textContent = '?'
+            emblema.addEventListener('click', () => {
+              indice++
+              if (indice >= classes.length) {
+                indice = -1
+              }
+              if (indice === -1) {
+                emblema.textContent = '?'
+                li.classList.remove(...classes)
+              } else {
+                emblema.textContent = emojis[indice]
+                li.classList.remove(...classes)
+                li.classList.add(classes[indice])
+              }
+              salvarDados()
+            })
+
+            const span = document.createElement('span')
+            span.classList.add('jogador-nome')
+            span.textContent = jogador.nome
+
+            const div = document.createElement('div')
+            div.classList.add('loot-controle')
+            const aumentar = document.createElement('button')
+            aumentar.textContent = '+'
+            aumentar.addEventListener('click', () => {
+              lootCount++
+              count.textContent = lootCount
+              salvarDados()
+            })
+            const diminuir = document.createElement('button')
+            diminuir.textContent = '-'
+            diminuir.addEventListener('click', () => {
+              if (lootCount > 0) {
+                lootCount--
+              }
+              count.textContent = lootCount
+              salvarDados()
+            })
+            const count = document.createElement('span')
+            count.classList.add('loot-count')
+            count.textContent = jogador.loot
+
+            const x = document.createElement('button')
+            x.textContent = 'X'
+            x.classList.add('excluir')
+            x.addEventListener('click', () => {
+              li.remove()
+              atualizarContador()
+              salvarDados()
+            })
+
+            if (jogador.classe) {
+              li.classList.add(jogador.classe)
+              indice = classes.indexOf(jogador.classe)
+              emblema.textContent = emojis[indice]
+            }
+
+            lista.appendChild(li)
+            li.appendChild(emblema)
+            li.appendChild(span)
+            li.appendChild(div)
+            div.appendChild(aumentar)
+            div.appendChild(count)
+            div.appendChild(diminuir)
+            li.appendChild(x)
+
+        })
+        atualizarContador()
+      }
+
+    }
+    carregarDados()
+
+  </script>
+
+</body>
+</html>
