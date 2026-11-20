@@ -41,11 +41,6 @@ Criado por **Alanya** da guilda **Lagados e Furiosos** (Horda) e para uso dos jo
 - `.find()` e `.indexOf()` para busca em arrays
 - Template literals
 
-## Como usar
-
-1. Clone o repositório
-2. Abra o `index.html` no navegador
-
 ---
 
 Desenvolvido por **Elias Higor** & **Claude AI**
